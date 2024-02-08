@@ -8,6 +8,7 @@ export function App() {
     // my-10 = tudo multiplo de 4
     // height = h-px que seria height de 1px pra fazer separador; h-[20px] para personalizado
     //div pro degrade preto; gradient-to-t é to top, de baixo pra cima
+    // chaves {} é para colocar codigo javascript dentro do html
     <div className="mx-auto max-w-6xl my-12 space-y-6">
       <img src={logo} alt="NLW Expert" />
       <form className="w-full">
@@ -21,12 +22,13 @@ export function App() {
       <div className="h-px bg-slate-700" />
 
       <div className="grid grid-cols-3 gap-6 auto-rows-[250px]">
-        <NewNoteCard/>
-        <NoteCard/>
-        <NoteCard/>
-        <NoteCard/>
-        <NoteCard/>
-        <NoteCard/>
+        <NewNoteCard />
+        <NoteCard
+          note={{
+            date: new Date(),
+            content: "Hello World",
+          }}
+        />
       </div>
     </div>
   );
