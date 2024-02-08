@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.toast-custom {
+  /* Estilo do background */
+  background-color: #2d3748; /* bg-slate-800 */
+}
+
+.toast-custom .toast-content {
+  /* Estilo do texto */
+  color: #68d391; /* text-lime-400 */
+}

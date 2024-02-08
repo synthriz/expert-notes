@@ -143,7 +143,7 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
                   >
                     {" "}
                     utilize apenas texto{" "}
-                  </button>{" "}
+                  </button>
                   .
                 </p>
               ) : (
