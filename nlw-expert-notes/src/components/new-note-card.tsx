@@ -7,9 +7,12 @@ interface NewNoteCardProps {
   onNoteCreated: (content: string) => void
 }
 
+let speechRecognition: SpeechRecognition | null = null
+
 export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
   // aqui no array temos uma variavel, e uma função set para atualizar o valor da variavel
   const [shouldShowOnboarding, setshouldShowOnboarding] = useState(true);
+  const [isRecording, setIsRecording] = useState(false)
   const [content, setContent] = useState("");
 
   function handleStartEditor() {
@@ -32,6 +35,11 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
   function handleSaveNote(event: FormEvent) {
     event.preventDefault();
 
+    // se o conteúdo da nota for vazio, o return bloqueia o resto do código
+    if (content === '') {
+      return
+    }
+
     onNoteCreated(content)
     setContent('')
     //depois de criar a nota, o conteudo muda para o padrao de criar nota
@@ -39,6 +47,59 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
 
     toast.success('Nota criada com sucesso!')
   }
+
+  function handleStartRecording() {
+
+    // verificar se tá disponivel a api no navegador
+    const isSpeechRecognitionAPIAvailable = 'SpeechRecognition' in window
+      || 'webkitSpeechRecognition' in window
+
+    if (!isSpeechRecognitionAPIAvailable) {
+      alert('Infelizmente seu navegador não suporta a API de gravação!')
+      return
+    }
+
+    setIsRecording(true)
+    setshouldShowOnboarding(false)
+
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    speechRecognition = new SpeechRecognitionAPI()
+
+    speechRecognition.lang = 'pt-BR'
+
+    // para gravar até que o usuario manualmente pare a gravação
+    speechRecognition.continuous = true
+
+    // trazer x alternativas para as palavras ditas
+    speechRecognition.maxAlternatives = 1
+
+    // trazer os resultados conforme for falando
+    speechRecognition.interimResults = true
+
+    speechRecognition.onresult = (event) => {
+      const transcription = Array.from(event.results).reduce((text, result) => {
+        return text.concat(result[0].transcript)
+      }, '')
+
+      setContent(transcription)
+    }
+
+    speechRecognition.onerror = (event) => {
+      console.error(event)
+    }
+
+    speechRecognition.start()
+  }
+
+  function handleStopRecording () {
+    setIsRecording(false)
+    
+    if (speechRecognition !== null) {
+      speechRecognition.stop()
+    }
+  }
+
 
   return (
     <Dialog.Root>
@@ -59,7 +120,7 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
             <X className="size-5" />
           </Dialog.Close>
 
-          <form onSubmit={handleSaveNote} className="flex-1 flex flex-col">
+          <form className="flex-1 flex flex-col">
             <div className="flex flex-1 flex-col gap-3 p-5">
               <span className="text-sm font-medium text-slate-300">
                 Adicionar nota
@@ -70,12 +131,13 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
                 <p className="text-sm leading-6 text-slate-400">
                   {" "}
                   Comece{" "}
-                  <button className="font-medium text-lime-400 hover:underline">
+                  <button type='button' onClick={handleStartRecording} className="font-medium text-lime-400 hover:underline">
                     {" "}
                     gravando uma nota{" "}
                   </button>{" "}
                   em áudio ou se preferir {/* {' '} pra adicionar espaço */}
                   <button
+                    type='button'
                     onClick={handleStartEditor}
                     className="font-medium text-lime-400 hover:underline"
                   >
@@ -93,14 +155,27 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
                 />
               )}
             </div>
-
-            {/* tailwind: hover underline apenas no "apagar essa nota" porem quando o mouse fosse por cima do elemento pai, usa-se GROUP */}
-            <button
-              type="submit"
+            
+            {isRecording ? (
+              <button
+              onClick={handleStopRecording}
+              type="button"
+              className="w-full flex items-center justify-center gap-2 bg-slate-900 py-4 text-center text-sm text-slate-300 outline-none font-medium hover:text-slate-100"
+            >
+              <div className="size-3 rounded-full bg-red-500 animate-pulse" />
+              Gravando! (clique para interromper)
+            </button>
+            ) : (
+              <button
+              type="button"
+              onClick={handleSaveNote}
               className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500"
             >
               Salvar nota
             </button>
+            )}
+
+            {/* tailwind: hover underline apenas no "apagar essa nota" porem quando o mouse fosse por cima do elemento pai, usa-se GROUP */}
           </form>
         </Dialog.Content>
       </Dialog.Portal>
