@@ -1,7 +1,7 @@
 # Expert Notes 📝
 Expert Notes é uma aplicação front-end responsiva de notas, que permite que o usuário crie e exclua notas de forma simples e intuitiva. Oferece também gravação de notas de áudio e persistência de dados. 
 
-## Funcionalidades
+## ⚙️ Funcionalidades
 
 - Criação e gerenciamento de notas de forma dinâmica.
 - Utilização da API SpeechRecognition para transcrição de fala em notas escritas.
@@ -9,7 +9,7 @@ Expert Notes é uma aplicação front-end responsiva de notas, que permite que o
 - Capacidade de salvar e excluir notas.
 - Persistência de dados utilizando LocalStorage para evitar perda de informações.
 
-## Tecnologias Utilizadas
+## 🛠️ Tecnologias Utilizadas
 
 - React.js
 - Vite
@@ -20,7 +20,7 @@ Expert Notes é uma aplicação front-end responsiva de notas, que permite que o
 - Sonner
 - Lucide React
 
-## Deploy
+## 🔗 Deploy
 
 Disponível em https://expert-notes-nu.vercel.app/
 
